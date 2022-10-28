@@ -7,20 +7,19 @@ on:
 jobs:
   build: 
      runs-on: ubuntu-latest
-     env:
-       WORK_DIR: react-app
      
      steps: 
       - uses: actions/checkout@v2
       - name: install dependencies
+        working-directory: ./react-app
         run: |
-            cd $WORK_DIR
             npm ci
       - name: check formatting
+        working-directory: ./react-app
         run: |
-            cd $WORK_DIR
             npm run format:check
       - name: generate test coverage report
+        working-directory: ./react-app
         run: |
             cd $WORK_DIR
             npm test -- --coverage
