@@ -1,0 +1,5 @@
+* @manrodri
+*.js @manrodri
+*.yml @man-rodri-barr
+*.yaml @man-rodri-barr
+/public/ @manrodri
