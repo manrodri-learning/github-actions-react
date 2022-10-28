@@ -12,14 +12,17 @@ jobs:
      
      steps: 
       - uses: actions/checkout@v2
-      - run: |
-          cd $WORK_DIR
-          npm ci
-      - run: |
-          cd $WORK_DIR
-          npm run format:check
-      - run: |
-          cd $WORK_DIR
-          npm test -- --coverage
+      - name: install dependencies
+        run: |
+            cd $WORK_DIR
+            npm ci
+      - name: check formatting
+        run: |
+            cd $WORK_DIR
+            npm run format:check
+      - name: generate test coverage report
+        run: |
+            cd $WORK_DIR
+            npm test -- --coverage
         env:
           CI: true
