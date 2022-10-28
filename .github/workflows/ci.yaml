@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop]
+
+jobs:
+  build: 
+     runs-on: ubuntu-latest
+     
+     steps: 
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        working-directory: ./react-app
+        run: |
+            npm ci
+      - name: check formatting
+        working-directory: ./react-app
+        run: |
+            npm run format:check
+      - name: generate test coverage report
+        working-directory: ./react-app
+        run: |
+            npm test -- --coverage
+        env:
+          CI: true
