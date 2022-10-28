@@ -10,8 +10,12 @@ jobs:
      
      steps: 
       - uses: actions/checkout@v2
-      - run: npm CI
-      - run: npm run format:check
-      - run: npm test -- --coverage
+      - run: |
+          cd react-app
+          npm CI
+      - run: |
+          npm run format:check
+      - run: |
+          npm test -- --coverage
         env:
           CI: true
