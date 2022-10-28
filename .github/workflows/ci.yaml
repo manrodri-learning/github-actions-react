@@ -21,7 +21,6 @@ jobs:
       - name: generate test coverage report
         working-directory: ./react-app
         run: |
-            cd $WORK_DIR
             npm test -- --coverage
         env:
           CI: true
