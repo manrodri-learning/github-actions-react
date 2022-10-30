@@ -3,6 +3,8 @@ name: CI
 on:
   pull_request:
     branches: [develop]
+  push:
+    branches: [develop]
 
 jobs:
   build: 
@@ -24,3 +26,19 @@ jobs:
             npm test -- --coverage
         env:
           CI: true
+      - name: build production app
+        working-directory: ./react-app
+        if: github.event_name == 'push'
+        run: |
+          npm run build
+     
+      - name: Deploy to Staging S3 bucket
+        working-directory: ./react-app
+        env: # Or as an environment variable
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_STAGING_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
+        if: github.event_name == 'push'
+        run: |
+          aws s3 sync ./build s3://${S3_STAGING_BUCKET_NAME}
+        
