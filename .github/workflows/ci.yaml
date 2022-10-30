@@ -19,7 +19,7 @@ jobs:
         with:
           path: ~/.npm # different for each OS and package manager
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-log.json') }}
-          restore-key: |
+          restore-keys: |
              ${{ runner.os }}-node-
              
       - name: install dependencies
@@ -54,7 +54,7 @@ jobs:
         with:
           path: ~/.npm # different for each OS and package manager
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-log.json') }}
-          restore-key: |
+          restore-keys: |
              ${{ runner.os }}-node-
              
       - name: install dependencies
