@@ -32,6 +32,13 @@ jobs:
         run: |
           npm run build
      
+      - name: install aws-cli
+        if: github.event_name == 'push'
+        run: |
+          sudo apt-get install python3-setuptools
+          python3 -m pip install --user awscli
+          echo "Checking awscli version"
+          aws --version
       - name: Deploy to Staging S3 bucket
         working-directory: ./react-app
         env: # Or as an environment variable
