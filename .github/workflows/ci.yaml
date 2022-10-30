@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-coverage
-          path: coverage # or path/to/artifact
+          path: ./react-app/coverage # or path/to/artifact
      
   deploy:
     runs-on: ubuntu-latest
@@ -78,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-coverage
-          path: coverage # or path/to/artifact
+          path: ./react-app/coverage # or path/to/artifact
           
       - name: build production app
         working-directory: ./react-app
@@ -89,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-folder
-          path: build # or path/to/artifact
+          path: ./react-app/build # or path/to/artifact
         
       # deploy to S3
       - name: install aws-cli
