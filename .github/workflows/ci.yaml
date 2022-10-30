@@ -16,7 +16,7 @@ jobs:
       
       - name: cache dependencies
         uses: actions/cache@v1
-        width:
+        with:
           path: ~/.npm # different for each OS and package manager
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-log.json') }}
           restore-key: |
@@ -51,7 +51,7 @@ jobs:
       
       - name: cache dependencies
         uses: actions/cache@v1
-        width:
+        with:
           path: ~/.npm # different for each OS and package manager
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-log.json') }}
           restore-key: |
