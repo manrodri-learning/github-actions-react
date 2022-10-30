@@ -36,11 +36,12 @@ jobs:
             npm test -- --coverage
         env:
           CI: true
-      - name: build production app
-        working-directory: ./react-app
-        if: github.event_name == 'push'
-        run: |
-          npm run build
+      
+      - name: upload test coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-coverage
+          path: coverage # or path/to/artifact
      
   deploy:
     runs-on: ubuntu-latest
@@ -71,11 +72,24 @@ jobs:
             npm test -- --coverage
         env:
           CI: true
+      
+      - name: upload test coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-coverage
+          path: coverage # or path/to/artifact
+          
       - name: build production app
         working-directory: ./react-app
         if: github.event_name == 'push'
         run: |
           npm run build
+      - name: upload build folder
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-folder
+          path: build # or path/to/artifact
+        
       # deploy to S3
       - name: install aws-cli
         run: |
