@@ -9,9 +9,19 @@ on:
 jobs:
   build: 
      runs-on: ubuntu-latest
+     if: github.event_name == 'pull_request'
      
      steps: 
       - uses: actions/checkout@v2
+      
+      - name: cache dependencies
+        uses: actions/cache@v1
+        width:
+          path: ~/.npm # different for each OS and package manager
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-log.json') }}
+          restore-key: |
+             ${{ runner.os }}-node-
+             
       - name: install dependencies
         working-directory: ./react-app
         run: |
@@ -32,8 +42,42 @@ jobs:
         run: |
           npm run build
      
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      
+      - uses: actions/checkout@v2
+      
+      - name: cache dependencies
+        uses: actions/cache@v1
+        width:
+          path: ~/.npm # different for each OS and package manager
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-log.json') }}
+          restore-key: |
+             ${{ runner.os }}-node-
+             
+      - name: install dependencies
+        working-directory: ./react-app
+        run: |
+            npm ci
+      - name: check formatting
+        working-directory: ./react-app
+        run: |
+            npm run format:check
+      - name: generate test coverage report
+        working-directory: ./react-app
+        run: |
+            npm test -- --coverage
+        env:
+          CI: true
+      - name: build production app
+        working-directory: ./react-app
+        if: github.event_name == 'push'
+        run: |
+          npm run build
+      # deploy to S3
       - name: install aws-cli
-        # if: github.event_name == 'push'
         run: |
           sudo apt-get install python3-setuptools
           python3 -m pip install --user awscli
@@ -45,7 +89,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           S3_STAGING_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
-        if: github.event_name == 'push'
+        
         run: |
           aws s3 sync ./build s3://${S3_STAGING_BUCKET_NAME}
-        
