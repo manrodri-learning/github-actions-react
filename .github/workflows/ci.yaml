@@ -31,9 +31,7 @@ jobs:
         if: github.event_name == 'push'
         run: |
           npm run build
-      - uses: chrislennon/action-aws-cli@v1.1
-        if: github.event_name == 'push'
-      # All commands after this point have access to the AWS CLI
+     
       - name: Deploy to Staging S3 bucket
         working-directory: ./react-app
         env: # Or as an environment variable
@@ -42,5 +40,5 @@ jobs:
           S3_STAGING_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
         if: github.event_name == 'push'
         run: |
-          aws s3 sync ./public s3://${S3_STAGING_BUCKET_NAME}
+          aws s3 sync ./build s3://${S3_STAGING_BUCKET_NAME}
         
