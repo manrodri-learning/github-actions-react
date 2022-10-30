@@ -32,6 +32,7 @@ jobs:
         run: |
           npm run build
       - uses: chrislennon/action-aws-cli@v1.1
+        if: github.event_name == 'push'
       # All commands after this point have access to the AWS CLI
       - name: Deploy to Staging S3 bucket
         working-directory: ./react-app
