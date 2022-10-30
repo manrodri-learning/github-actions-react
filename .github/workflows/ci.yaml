@@ -12,10 +12,10 @@ jobs:
      if: github.event_name == 'pull_request'
      
      steps: 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       
       - name: cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm # different for each OS and package manager
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-log.json') }}
@@ -49,10 +49,10 @@ jobs:
     if: github.event_name == 'push'
     steps:
       
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@3
       
       - name: cache dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/.npm # different for each OS and package manager
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-log.json') }}
