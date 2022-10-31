@@ -92,7 +92,7 @@ jobs:
       - name: Generate release
         if: github.ref == 'refs/heads/main'
         run : |
-          semantic-release
+          npx semantic-release
         
       # deploy to S3
       - name: install aws-cli
