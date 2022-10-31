@@ -93,8 +93,12 @@ jobs:
         if: github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCHES: main
+          REPO_URL: github.action_repository
+          
         run : |
-          npx semantic-release
+          echo $REPO_URL
+          npx semantic-release 
         
       # deploy to S3
       - name: install aws-cli
