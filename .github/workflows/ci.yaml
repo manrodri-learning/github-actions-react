@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [develop]
+    branches: [develop, main]
   push:
-    branches: [develop]
+    branches: [develop, main]
 
 jobs:
   build: 
@@ -82,7 +82,6 @@ jobs:
           
       - name: build production app
         working-directory: ./react-app
-        if: github.event_name == 'push'
         run: |
           npm run build
       - name: upload build folder
@@ -90,6 +89,10 @@ jobs:
         with:
           name: build-folder
           path: ./react-app/build # or path/to/artifact
+      - name: Generate release
+        if: github.ref == 'refs/heads/main'
+        run : |
+          semantic-release
         
       # deploy to S3
       - name: install aws-cli
