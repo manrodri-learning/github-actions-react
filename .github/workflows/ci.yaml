@@ -91,6 +91,7 @@ jobs:
           path: ./react-app/build # or path/to/artifact
       - name: Generate release
         if: github.ref == 'refs/heads/main'
+        working-directory: ./react-app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCHES: main
