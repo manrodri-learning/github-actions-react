@@ -47,9 +47,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-    env:
-        S3_STAGING_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
-        S3_PROD_BUCKET_NAME: prod.github-actions.manrodri.com
+    
     steps:
       
       - uses: actions/checkout@v3
