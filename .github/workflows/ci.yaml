@@ -89,6 +89,11 @@ jobs:
         with:
           name: build-folder
           path: ./react-app/build # or path/to/artifact
+      - name: zip artifacts
+        working-directory: ./react-app
+        run: |
+          zip -r build.zip ./build
+          zip -r coverage.zip ./coverage
       - name: Generate release
         if: github.ref == 'refs/heads/main'
         working-directory: ./react-app
