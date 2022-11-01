@@ -106,18 +106,29 @@ jobs:
         run : |
           echo $REPO_URL
           npx semantic-release 
-      
-       - name: set environment variables
-         env:
-           BRANCH: github.ref_name
-         run: |
-            if ${BRANCH} == 'develop'; then
+      - name: Generate release
+        if: github.ref == 'refs/heads/main'
+        working-directory: ./react-app
+        env:
+          BRANCH: github.ref_name
+          
+        run : |
+          if ${BRANCH} == 'develop'; then
               echo "S3_BUCKET_NAME=$S3_STAGING_BUCKET_NAME" >> $GITHUB_ENV
               echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
-            elif ${BRANCH} == 'main'; then
-              echo "S3_BUCKET_NAME=$S3_PROD_BUCKET_NAME" >> $GITHUB_ENV
-              echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
-            fi
+          fi
+      
+      # - name: set environment variables
+      #   env:
+      #     BRANCH: github.ref_name
+      #   run: |
+      #       if ${BRANCH} == 'develop'; then
+      #         echo "S3_BUCKET_NAME=$S3_STAGING_BUCKET_NAME" >> $GITHUB_ENV
+      #         echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
+      #       elif ${BRANCH} == 'main'; then
+      #         echo "S3_BUCKET_NAME=$S3_PROD_BUCKET_NAME" >> $GITHUB_ENV
+      #         echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
+      #       fi
           
       # deploy to S3
       - name: install aws-cli
