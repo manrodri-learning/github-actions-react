@@ -47,6 +47,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    env:
+        S3_STAGING_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
+        S3_PROD_BUCKET_NAME: prod.github-actions.manrodri.com
     steps:
       
       - uses: actions/checkout@v3
@@ -105,6 +108,18 @@ jobs:
         run : |
           echo $REPO_URL
           npx semantic-release 
+      
+       - name: set environment variables
+        env:
+          BRANCH: github.ref_name
+        run: |
+          if ${BRANCH} == 'develop'; then
+            echo "S3_BUCKET_NAME=$S3_STAGING_BUCKET_NAME" >> $GITHUB_ENV
+            echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
+          elif ${BRANCH} == 'main'; then
+            echo "S3_BUCKET_NAME=$S3_PROD_BUCKET_NAME" >> $GITHUB_ENV
+            echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
+          fi
         
       # deploy to S3
       - name: install aws-cli
