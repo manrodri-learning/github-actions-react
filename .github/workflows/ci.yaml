@@ -106,36 +106,43 @@ jobs:
         run : |
           echo $REPO_URL
           npx semantic-release 
-      - name: Set env vars
-        if: github.ref == 'refs/heads/main'
-        working-directory: ./react-app
-        env:
-          BRANCH: ${{ github.ref_name }}
-          S3_STAGING_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
-          S3_PROD_BUCKET_NAME: prod.github-actions.manrodri.com
+      
           
-        run : |
-          if ${BRANCH} == 'develop'; then
-              echo "S3_BUCKET_NAME=$S3_STAGING_BUCKET_NAME" >> $GITHUB_ENV
-              echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
-          elif ${BRANCH} == 'main'; then
-              echo "S3_BUCKET_NAME=$S3_PROD_BUCKET_NAME" >> $GITHUB_ENV
-              echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
-          fi
-          
-      # deploy to S3
+     
       - name: install aws-cli
+        
         run: |
           sudo apt-get install python3-setuptools
           python3 -m pip install --user awscli
           echo "Checking awscli version"
           aws --version
+       
+      # deploy to Staging
       - name: Deploy to Staging S3 bucket
+        if: github.ref == 'refs/heads/develop'
         working-directory: ./react-app
         env: # Or as an environment variable
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
           
         
         run: |
+          aws s3 sync ./build s3://${S3_BUCKET_NAME}
+      # deploy to Staging
+      - name: Deploy to Prod S3 bucket
+        if: github.ref == 'refs/heads/main'
+        working-directory: ./react-app
+        env: # Or as an environment variable
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET_NAME: prod.github-actions.manrodri.com
+          CLOUDFRONT_ID: EO74ZQXNB4XEU
+          
+        
+        run: |
+          aws cloudfront create-invalidation \
+          --distribution-id E1F235GHIJKLM7 \
+          --paths /index.html /
+          
           aws s3 sync ./build s3://${S3_BUCKET_NAME}
