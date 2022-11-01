@@ -142,7 +142,7 @@ jobs:
         
         run: |
           aws cloudfront create-invalidation \
-          --distribution-id E1F235GHIJKLM7 \
+          --distribution-id $CLOUDFRONT_ID \
           --paths /index.html /
           
           aws s3 sync ./build s3://${S3_BUCKET_NAME}
