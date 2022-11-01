@@ -47,6 +47,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    env:
+        S3_STAGING_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
+        S3_PROD_BUCKET_NAME: prod.github-actions.manrodri.com
     steps:
       
       - uses: actions/checkout@v3
@@ -105,9 +108,28 @@ jobs:
         run : |
           echo $REPO_URL
           npx semantic-release 
+      - name: set environment variables
+        env:
+          BRANCH: github.ref_name
+        run: |
+          if ${BRANCH} == develop; then
+            echo "S3_BUCKET_NAME=$S3_STAGING_BUCKET_NAME" >> $GITHUB_ENV
+            echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
+          else
+            echo "S3_BUCKET_NAME=$S3_PROD_BUCKET_NAME" >> $GITHUB_ENV
+            echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
+          fi
+      
+      - name: invalidate cache in AWS cloudfront
+        if: github.ref == 'refs/heads/main'
+        env:
+          DISTRIBUTION_ID:  EO74ZQXNB4XEU 
+        run: |
+          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths /*
         
-      # deploy to S3
+      # deploy to S3 
       - name: install aws-cli
+        if: github.ref == 'refs/heads/develop'
         run: |
           sudo apt-get install python3-setuptools
           python3 -m pip install --user awscli
@@ -118,7 +140,7 @@ jobs:
         env: # Or as an environment variable
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          S3_STAGING_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
+         
         
         run: |
-          aws s3 sync ./build s3://${S3_STAGING_BUCKET_NAME}
+          aws s3 sync ./build s3://${S3_BUCKET_NAME}
