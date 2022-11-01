@@ -110,7 +110,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         working-directory: ./react-app
         env:
-          BRANCH: github.ref_name
+          BRANCH: ${{ github.ref_name }}
           S3_STAGING_BUCKET_NAME: s3retentionsample-s3bucket-1syqzlv2ikc5n
           S3_PROD_BUCKET_NAME: prod.github-actions.manrodri.com
           
